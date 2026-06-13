@@ -5,10 +5,14 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 
-const contactRoutes =
-    require('./modules/contact/contact.routes');
+const contactRoutes = require('./modules/contact/contact.routes');
 
 const app = express();
+
+app.use((req, res, next) => {
+    console.log('REQUEST:', req.method, req.url);
+    next();
+});
 
 /*
  * Body Parsers
@@ -24,7 +28,31 @@ app.use(helmet());
 app.use(morgan('combined'));
 
 /*
- * Routes
+ * Health Check
+ */
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        success: true,
+        service: 'SukalyanAI Backend'
+    });
+});
+
+/*
+ * Test Endpoint
+ */
+app.post('/api/test', (req, res) => {
+
+    console.log('TEST HIT');
+    console.log(req.body);
+
+    res.status(200).json({
+        success: true,
+        message: 'Test endpoint working'
+    });
+});
+
+/*
+ * Contact Routes
  */
 app.use('/api/contact', contactRoutes);
 
